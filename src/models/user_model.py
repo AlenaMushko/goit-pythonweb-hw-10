@@ -1,8 +1,8 @@
-from datetime import date
+from datetime import datetime
 import re
 
-from sqlalchemy import Date, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy import Boolean, DateTime, String, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from src.conf.constants import (
     NAME_MAX_LENGTH,
@@ -24,8 +24,14 @@ class UserModel(Base):
     last_name: Mapped[str] = mapped_column(String(NAME_MAX_LENGTH), nullable=False)
     email: Mapped[str] = mapped_column(String(EMAIL_MAX_LENGTH), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
-    created_at: Mapped[date] = mapped_column(Date, nullable=False)
-    updated_at: Mapped[date] = mapped_column(Date, nullable=False)
+    avatar: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+    contacts = relationship("ContactModel", back_populates="owner", cascade="all, delete-orphan")
+    tokens = relationship("TokenModel", back_populates="owner", cascade="all, delete-orphan")
 
     @validates("first_name")
     def validate_first_name(self, key, value: str) -> str:

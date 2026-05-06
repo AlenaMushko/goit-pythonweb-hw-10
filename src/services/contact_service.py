@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.models.user_model import UserModel
 from src.repositories.contact_repository import ContactRepository
 from src.schemas.contact_schemas import ContactBirthdayResponse, ContactCreate, ContactUpdate
 from src.utils.logger import Logger
@@ -13,22 +14,22 @@ class ContactService:
         self.repository = ContactRepository(db)
         self.logger = Logger()
 
-    async def create_contact(self, body: ContactCreate):
-        contact = await self.repository.create_contact(body)
+    async def create_contact(self, body: ContactCreate, user: UserModel):
+        contact = await self.repository.create_contact(body, user)
         self.logger.info(
             f"Contact created successfully: id={contact.id}, name={contact.name + ' ' + contact.surname}",
             title="ContactService",
         )
         return contact
 
-    async def get_all_contacts(self, skip: int = 0, limit: int = 100):
-        return await self.repository.get_all_contacts(skip, limit)
+    async def get_all_contacts(self, user: UserModel, skip: int = 0, limit: int = 100):
+        return await self.repository.get_all_contacts(user, skip, limit)
 
-    async def get_contact_by_id(self, contact_id: int):
-        return await self.repository.get_contact_by_id(contact_id)
+    async def get_contact_by_id(self, contact_id: int, user: UserModel):
+        return await self.repository.get_contact_by_id(contact_id, user)
 
-    async def update_contact(self, contact_id: int, body: ContactUpdate):
-        contact = await self.repository.update_contact(contact_id, body)
+    async def update_contact(self, contact_id: int, body: ContactUpdate, user: UserModel):
+        contact = await self.repository.update_contact(contact_id, body, user)
         if contact is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -40,8 +41,8 @@ class ContactService:
         )
         return contact
 
-    async def remove_contact(self, contact_id: int):
-        contact = await self.repository.remove_contact(contact_id)
+    async def remove_contact(self, contact_id: int, user: UserModel):
+        contact = await self.repository.remove_contact(contact_id, user)
         if contact is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -58,15 +59,16 @@ class ContactService:
         name: str | None = None,
         surname: str | None = None,
         email: str | None = None,
+        user: UserModel | None = None,
         skip: int = 0,
         limit: int = 100,
     ):
-        return await self.repository.search_contacts_by_query(name, surname, email, skip, limit)
+        return await self.repository.search_contacts_by_query(name, surname, email, user, skip, limit)
 
-    async def get_upcoming_birthdays(self, days: int = 7):
+    async def get_upcoming_birthdays(self, user: UserModel, days: int = 7):
         today = date.today()
         end_date = today + timedelta(days=days)
-        contacts = await self.repository.get_upcoming_birthdays(today, end_date)
+        contacts = await self.repository.get_upcoming_birthdays(today, end_date, user)
 
         def birthday_in_year(birth: date, year: int) -> date:
             try:

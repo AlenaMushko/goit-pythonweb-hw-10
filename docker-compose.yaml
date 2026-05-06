@@ -25,10 +25,28 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "5001:8000"
+      - "5001:8003"
     environment:
       APP_HOST: 0.0.0.0
-      APP_PORT: 8000
+      APP_PORT: 8003
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-*}
+      SECRET_KEY: ${SECRET_KEY:-change_me}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_SERVER: ${MAIL_SERVER:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Contacts API}
+      MAIL_STARTTLS: ${MAIL_STARTTLS:-True}
+      MAIL_SSL_TLS: ${MAIL_SSL_TLS:-False}
+      USE_CREDENTIALS: ${USE_CREDENTIALS:-True}
+      VERIFY_EMAIL_HOST: ${VERIFY_EMAIL_HOST:-http://localhost:8003}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      TOKEN_CLEANUP_INTERVAL_SECONDS: ${TOKEN_CLEANUP_INTERVAL_SECONDS:-604800}
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-hw10}
     volumes:
       - .:/hw_10-app-container

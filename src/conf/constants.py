@@ -1,5 +1,24 @@
-API_PREFIX = "/api/v1"
-CONTACTS_PREFIX = "/contacts"
+VERSION = {
+    "v1": "v1",
+}
+
+API_VERSION = VERSION["v1"]
+
+PREFIX = {
+    "api": f"/api/{API_VERSION}",
+    "auth": "/auth",
+    "users": "/users",
+    "contacts": "/contacts",
+}
+
+API_PREFIX = PREFIX["api"]
+AUTH_PREFIX = PREFIX["auth"]
+USERS_PREFIX = PREFIX["users"]
+CONTACTS_PREFIX = PREFIX["contacts"]
+CONFIRMED_EMAIL_PATH = "/confirmed_email"
+CLOUDINARY_AVATARS_FOLDER = "contacts_api"
+ALLOWED_AVATAR_CONTENT_TYPES = ("image/png", "image/jpeg", "image/webp")
+MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024
 
 NAME_MAX_LENGTH = 30
 EMAIL_MAX_LENGTH = 50

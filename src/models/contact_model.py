@@ -1,8 +1,8 @@
 from datetime import date
 import re
 
-from sqlalchemy import Date, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy import Date, ForeignKey, String, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from src.db.base import Base
 from src.conf.constants import (
@@ -31,6 +31,8 @@ class ContactModel(Base):
     additional_info: Mapped[str | None] = mapped_column(
         String(ADDITIONAL_INFO_MAX_LENGTH), nullable=True
     )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    owner = relationship("UserModel", back_populates="contacts")
 
     @validates("email")
     def validate_email(self, key, value: str) -> str:

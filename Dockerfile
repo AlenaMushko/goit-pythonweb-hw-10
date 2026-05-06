@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 
 ENV APP_HOME=/hw_10-app-container
-ENV APP_PORT=8000
+ENV APP_PORT=8003
 
 WORKDIR $APP_HOME
 

@@ -32,7 +32,7 @@ It supports creating, reading, updating, deleting, searching contacts, and listi
 4. Start app:
    - `poetry run python main.py`
 5. Open API:
-   - `http://127.0.0.1:8000/docs`
+   - `http://127.0.0.1:8003/docs`
 
 ## Health check
 

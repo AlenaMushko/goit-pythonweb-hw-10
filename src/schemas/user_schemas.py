@@ -58,5 +58,21 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    avatar: str | None = None
+    is_verified: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+
+class RequestEmail(BaseModel):
+    email: str
