@@ -110,8 +110,18 @@ class ContactUpdate(BaseModel):
 
     @model_validator(mode="after")
     def validate_not_empty_payload(self):
-        if not self.model_dump(exclude_unset=True):
+        payload = self.model_dump(exclude_unset=True)
+        if not payload:
             raise ValueError("At least one field must be provided for update")
+
+        required_non_empty_fields = ("name", "surname", "email", "phone")
+        for field_name in required_non_empty_fields:
+            if field_name in payload and payload[field_name] is None:
+                raise ValueError(f"{field_name.capitalize()} cannot be empty")
+
+        if "birthday" in payload and payload["birthday"] is None:
+            raise ValueError("Birthday cannot be empty")
+
         return self
 
 

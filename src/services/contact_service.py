@@ -26,7 +26,13 @@ class ContactService:
         return await self.repository.get_all_contacts(user, skip, limit)
 
     async def get_contact_by_id(self, contact_id: int, user: UserModel):
-        return await self.repository.get_contact_by_id(contact_id, user)
+        contact = await self.repository.get_contact_by_id(contact_id, user)
+        if contact is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Contact not found",
+            )
+        return contact
 
     async def update_contact(self, contact_id: int, body: ContactUpdate, user: UserModel):
         contact = await self.repository.update_contact(contact_id, body, user)

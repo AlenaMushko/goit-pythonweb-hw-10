@@ -1,3 +1,5 @@
+import logging
+
 import cloudinary
 import cloudinary.uploader
 from cloudinary import CloudinaryImage
@@ -13,6 +15,8 @@ cloudinary.config(
     secure=True,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class UploadFileService:
     @staticmethod
@@ -21,17 +25,16 @@ class UploadFileService:
 
     @staticmethod
     def upload_avatar(file_path: str, public_id: str) -> str:
-        print(f"file_path: {file_path} public_id: {public_id}")
-        
+        logger.debug("Uploading avatar to Cloudinary: file_path=%s public_id=%s", file_path, public_id)
+
         try:
             response = cloudinary.uploader.upload(file_path, public_id=public_id, overwrite=True)
             return response.get("secure_url")
 
-        except Exception as e:
-            print("CLOUDINARY ERROR TYPE:", type(e))
-            print("CLOUDINARY ERROR:", str(e))
+        except Exception:
+            logger.exception("Cloudinary avatar upload failed")
             raise
-        
+
     @staticmethod
     def delete_avatar(public_id: str) -> None:
         cloudinary.uploader.destroy(public_id, invalidate=True)

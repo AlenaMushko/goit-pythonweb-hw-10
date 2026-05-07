@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Path, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.session import get_db
@@ -58,20 +58,17 @@ async def get_upcoming_birthdays(
 
 @router.get("/{contact_id}", response_model=ContactResponse)
 async def read_contact_by_id(
-    contact_id: int,
+    contact_id: int = Path(..., ge=1),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
     service = ContactService(db)
-    contact = await service.get_contact_by_id(contact_id, current_user)
-    if contact is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
-    return contact
+    return await service.get_contact_by_id(contact_id, current_user)
 
 
 @router.patch("/{contact_id}", response_model=ContactResponse)
 async def update_contact(
-    contact_id: int,
+    contact_id: int = Path(..., ge=1),
     body: ContactUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
@@ -82,7 +79,7 @@ async def update_contact(
 
 @router.delete("/{contact_id}", response_model=ContactResponse)
 async def remove_contact(
-    contact_id: int,
+    contact_id: int = Path(..., ge=1),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
